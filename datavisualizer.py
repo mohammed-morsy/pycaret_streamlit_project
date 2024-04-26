@@ -16,7 +16,7 @@ class DataVisualizer:
         """
         self.data = data
 
-    def scatter_plot(self, x_variable, y_variable):
+    def scatter_plot(self, x_variable, y_variable, grid=False):
         """
         Create a scatter plot.
 
@@ -24,11 +24,12 @@ class DataVisualizer:
         - x_variable (str): Name of the variable for the x-axis.
         - y_variable (str): Name of the variable for the y-axis.
         """
+        plt.cla()
         fig, ax = plt.subplots()
         sns.scatterplot(x=x_variable, y=y_variable, data=self.data)
-        st.pyplot(fig)
+        self.plot(fig, grid)
 
-    def histogram(self, variable, bins):
+    def histogram(self, variable, bins, grid=False):
         """
         Create a histogram.
 
@@ -37,9 +38,9 @@ class DataVisualizer:
         """
         fig, ax = plt.subplots()
         sns.histplot(self.data[variable], bins = bins)
-        st.pyplot(fig)
+        self.plot(fig, grid)
 
-    def box_plot(self, x_variable, y_variable):
+    def box_plot(self, x_variable, y_variable, grid=False):
         """
         Create a box plot.
 
@@ -47,11 +48,12 @@ class DataVisualizer:
         - x_variable (str): Name of the variable for the x-axis.
         - y_variable (str): Name of the variable for the y-axis.
         """
+        plt.cla()
         fig, ax = plt.subplots()
         sns.boxplot(x=x_variable, y=y_variable, data=self.data)
-        st.pyplot(fig)
+        self.plot(fig, grid)
 
-    def bar_plot(self, x_variable, y_variable):
+    def bar_plot(self, x_variable, y_variable, grid=False):
         """
         Create a bar plot.
 
@@ -59,24 +61,26 @@ class DataVisualizer:
         - x_variable (str): Name of the variable for the x-axis.
         - y_variable (str): Name of the variable for the y-axis.
         """
+        plt.cla()
         fig, ax = plt.subplots()
         sns.barplot(x=x_variable, y=y_variable, data=self.data)
-        st.pyplot(fig)
+        self.plot(fig, grid)
 
-    def heatmap(self, variables):
+    def heatmap(self):
         """
         Create a heatmap.
 
         Parameters:
         - variables (list): List of variables for the heatmap.
         """
+        plt.cla()
         st.write("Select variables for the heatmap:")
-        heatmap_variables = st.multiselect("Select variables:", self.data.columns)
+        heatmap_variables = st.multiselect("Select variables:", self.data.select_dtypes(exclude="object").columns)
         if heatmap_variables:
             heatmap_data = self.data[heatmap_variables].corr()
             fig, ax = plt.subplots()
             sns.heatmap(heatmap_data, annot=True, cmap="coolwarm")
-            st.pyplot(fig)
+            self.plot(fig)
         else:
             st.warning("Please select at least one variable for the heatmap.")
 
@@ -90,10 +94,14 @@ class DataVisualizer:
         - scale (str or None): Scaling of the plot (e.g., "linear", "log", "symlog", "logit").
         - grid (bool): Whether to display grid lines.
         """
+        plt.cla()
         fig, ax = plt.subplots()
         if scale:
             ax.set_yscale(scale)
-        if grid:
-            ax.grid(True)
         sns.lineplot(x=x_variable, y=y_variable, data=self.data)
+        self.plot(fig, grid)
+
+    def plot(self, fig, grid=None):
+        plt.grid(grid)
+        plt.xticks(rotation=45)
         st.pyplot(fig)

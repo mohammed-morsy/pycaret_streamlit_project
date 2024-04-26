@@ -64,51 +64,47 @@ class DataLoader:
         - DataFrame: Loaded dataset.
         """
         # Allow users to upload a file
-        user_file = st.file_uploader("Upload your data file (CSV, Excel, etc.):")
+        self.user_file = st.file_uploader("Upload your data file (CSV, Excel, etc.):")
 
         # Provide a selection box for PyCaret datasets
         pycaret_dataset = st.selectbox("Select a PyCaret dataset:", self.pycaret_datasets)
 
-        if user_file is not None:
+        if self.user_file is not None:
             try:
                 # Load user-provided data
-                data = self.read_file(user_file)  
+                data = self.read_file()  
                 st.write("User's data loaded successfully.")
                 return data
             except Exception as e:
-                st.error("Error loading user's data: {}".format(str(e)))
+                st.error(f"Error loading user's data: {e}")
         elif pycaret_dataset:
             try:
                 # Load PyCaret's built-in dataset
                 data = get_data(pycaret_dataset)
-                st.write("PyCaret dataset '{}' loaded successfully.".format(pycaret_dataset))
+                st.write(f"PyCaret dataset '{pycaret_dataset}' loaded successfully.")
                 return data
             except Exception as e:
-                st.error("Error loading PyCaret dataset: {}".format(str(e)))
+                st.error("Error loading PyCaret dataset: {e}")
         else:
             st.warning("Please provide either user_file or pycaret_dataset.")
 
-    @classmethod
-    def read_file(cls, user_file):
+    def read_file(self):
         """
         Read a file based on its extension.
-
-        Parameters:
-        - user_file (DataFrame or None): DataFrame uploaded by the user.
 
         Returns:
         - DataFrame: Loaded dataset.
         """
-        if user_file is not None:
+        if self.user_file is not None:
             try:
-                file_extension = user_file.name.split(".")[-1].lower()
-                file_format = cls.FILE_EXTENSIONS.get(file_extension)
+                file_extension = self.user_file.name.split(".")[-1].lower()
+                file_format = self.FILE_EXTENSIONS.get(file_extension)
                 if not file_format:
                     st.error("Unsupported file format.")
                     st.write("Supported file formate:\n    -", '\n    -'.join(sorted(set(cls.FILE_EXTENSIONS.values()))))
                 else:
                     read_function = getattr(pd, f"read_{file_format}")
-                    df = read_function(user_file)
+                    df = read_function(self.user_file)
                     return df
             except Exception as e:
                 st.error(f"Error reading file: {str(e)}")
