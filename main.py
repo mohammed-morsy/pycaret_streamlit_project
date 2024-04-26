@@ -17,7 +17,8 @@ def main():
     data = data_loader.load_data()
 
     if data is not None:
-        data = data.sample(1000,replace=True).reset_index()
+        if len(data) > 5000:
+            data = data.sample(5000, ignore_index=True)
         st.header("Loaded Dataset Sample:")
         st.write(data.sample(n=10))
         
