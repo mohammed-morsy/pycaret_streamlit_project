@@ -65,9 +65,9 @@ def model_building(data, problem_type, target_column):
     
     # Define available models based on problem type
     if problem_type == "Regression":
-        available_models = ["lr", "lasso", "ridge", "rf", "knn", "dt", "svm", "lightgbm"]
+        available_models = ["lr", "lasso", "ridge", "rf", "knn", "dt", "svm"]
     else:
-        available_models = ["lr", "dt", "rf", "svm", "knn", "lightgbm"]
+        available_models = ["lr", "dt", "rf", "svm", "knn"]
 
     # Allow user to select models
     selected_models = st.multiselect("Select models (2 to 3):", available_models, default=available_models[:2], key="selected_models")
